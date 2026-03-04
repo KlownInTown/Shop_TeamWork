@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная | MarketPlace{% endblock %}
+
+{% block content %}
+<h1>Новая коллекция 2024</h1>
+<div class="row">
+    {% for i in "123" %}
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h5>Товар #{{ i }}</h5> <p>Цена: 4 990 ₽</p>
+            <button class="btn btn-primary">Купить</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
