@@ -3,15 +3,28 @@
 {% block title %}Главная | MarketPlace{% endblock %}
 
 {% block content %}
-<h1>Новая коллекция 2024</h1>
-<div class="row">
-    {% for i in "123" %}
-    <div class="col-md-4">
-        <div class="card p-3">
-            <h5>Товар #{{ i }}</h5> <p>Цена: 4 990 ₽</p>
-            <button class="btn btn-primary">Купить</button>
+<div class="container">
+    <h1 class="my-4 text-center">Новая коллекция 2026</h1>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4"> {% for product in products %}
+        <div class="col">
+            <div class="card h-100 shadow-sm"> {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top mx-auto d-block" alt="{{ product.title }}" 
+                     style="width: auto; height: 350px; object-fit: contain;"> {% else %}
+                <div class="bg-light text-center d-flex align-items-center justify-content-center" style="height: 350px;">
+                    <span class="text-muted">Нет фото</span>
+                </div>
+            {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ product.title }}</h5>
+                    <p class="card-text text-primary fw-bold">{{ product.price }} ₽</p>
+                    
+                    <a href="{% url 'product_detail' pk=product.pk %}" class="btn btn-primary mt-auto">Посмотреть</a>
+                </div>
+            </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endblock %}
