@@ -18,13 +18,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from store.views import index
-from store.views import index, product_detail
+from store.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index, name='index'), 
+    path('', index, name='index'),
+    path('category/<str:category_slug>/', index, name='products_by_category'),
     path('product/<int:pk>/', product_detail, name='product_detail'),
+    path('cart/', cart, name='cart'), # страница корзины
+    path('update_cart_item/<int:pk>/<str:action>/', update_cart_item, name='update_cart_item'),
+    path('search/', search_results, name='search_results'),
 ]
 
 if settings.DEBUG:

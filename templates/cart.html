@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="mb-4 fw-bold">Ваша корзина</h2>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                {% for item in items %}
+                
+                {% if item.product %}
+                <div class="row align-items-center mb-3 pb-3 border-bottom">
+                    <div class="col-2">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="img-fluid rounded" alt="">
+                        {% endif %}
+                    </div>
+                    <div class="col-4">
+                        <h5 class="mb-0 fw-bold">{{ item.product.title }}</h5>
+                        <small class="text-muted">{{ item.product.price }} ₽ за шт.</small>
+                    </div>
+                    <div class="col-3 text-center">
+                        <div class="input-group border rounded-pill d-inline-flex align-items-center" style="width: auto;">
+                            <a href="{% url 'update_cart_item' pk=item.product.pk action='remove' %}" class="btn btn-link text-dark px-3 py-1 text-decoration-none fs-5">
+                                -
+                            </a>
+                            
+                            <span class="fs-5 fw-bold px-2">{{ item.quantity }}</span>
+                            
+                            <a href="{% url 'update_cart_item' pk=item.product.pk action='add' %}" class="btn btn-link text-dark px-3 py-1 text-decoration-none fs-5">
+                                +
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-3 text-end">
+                        <span class="fw-bold fs-5">{{ item.get_total }} ₽</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    Один из товаров в вашей корзине больше не доступен и был удален из базы.
+                </div>
+                {% endif %}
+
+                {% empty %}
+                <p class="text-center py-5">В корзине пока пусто. <a href="{% url 'index' %}">К покупкам!</a></p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow p-4 bg-dark text-white" style="border-radius: 15px;">
+                <h4 class="mb-4">Итого</h4>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Товаров:</span>
+                    <span>{{ order.get_cart_items }}</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="fs-5">К оплате:</span>
+                    <span class="fs-4 fw-bold">{{ order.get_cart_total }} ₽</span>
+                </div>
+                <button class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow">
+                    Оформить заказ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

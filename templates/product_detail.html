@@ -1,36 +1,71 @@
 {% extends 'base.html' %}
-
-{% block title %}{{ product.title }} | MarketPlace{% endblock %}
-
 {% block content %}
 <div class="container mt-5">
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row align-items-center">
+        
+        <div class="col-md-7 pe-5">
             {% if product.image %}
-                <img src="{{ product.image.url }}" class="img-fluid rounded shadow" alt="{{ product.title }}">
+                <img src="{{ product.image.url }}" class="img-fluid rounded-4 shadow-sm" alt="{{ product.title }}" style="width: 100%; height: auto; max-height: 700px; object-fit: contain;">
             {% else %}
-                <img src="https://via.placeholder.com/500x400" class="img-fluid rounded" alt="Нет фото">
+                <img src="https://via.placeholder.com/600x600" class="img-fluid rounded" alt="Нет фото">
             {% endif %}
         </div>
 
-        <div class="col-md-6">
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li>
-                <li class="breadcrumb-item active">{{ product.category.name }}</li>
-              </ol>
-            </nav>
-
-            <h1 class="display-4">{{ product.title }}</h1>
-            <p class="h2 text-primary my-4">{{ product.price }} ₽</p>
+        <div class="col-md-5">
             
-            <div class="my-4">
-                <h5>Описание:</h5>
-                <p class="lead">{{ product.description }}</p>
+            <div class="mb-5 d-flex align-items-center">
+                <a href="{% url 'index' %}" class="text-muted text-decoration-none me-4 fw-bold fs-3">
+                    <a href="{% url 'index' %}" class="text-dark text-decoration-none me-3 fs-2 transition-hover" title="Назад к покупкам">
+                        ←
+                    </a>
+                <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}">Главная</a></li>
+                    <li class="breadcrumb-item active">
+                        <a href="{% url 'products_by_category' product.category.slug %}" class="text-decoration-none text-primary">
+                            {{ product.category.name }}
+                        </a>
+                    </li>
+                  </ol>
+                </nav>
             </div>
 
-            <button class="btn btn-success btn-lg w-100 mt-3">Добавить в корзину</button>
-            <a href="{% url 'index' %}" class="btn btn-outline-secondary w-100 mt-2">Вернуться назад</a>
+            <h1 class="display-3 fw-bolder mb-3">{{ product.title }}</h1>
+            <p class="h1 text-primary fw-bold my-4">{{ product.price }} ₽</p>
+            
+            <div class="my-5 fs-5">
+                <h5 class="fw-bold">Описание:</h5>
+                <p class="text-muted">{{ product.description }}</p>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                
+                {% if cart_item_quantity > 0 %}
+                    
+                    <div class="input-group border border-2 rounded-pill shadow-sm" style="width: auto; overflow: hidden;">
+                        
+                        <a href="{% url 'update_cart_item' pk=product.pk action='remove' %}" class="btn btn-outline-dark border-0 fs-3 px-4 py-2" style="border-radius: 0;">
+                            -
+                        </a>
+                        
+                        <span class="d-flex align-items-center justify-content-center bg-white fs-4 fw-bold px-4" style="min-width: 60px;">
+                            {{ cart_item_quantity }}
+                        </span>
+                        
+                        <a href="{% url 'update_cart_item' pk=product.pk action='add' %}" class="btn btn-outline-dark border-0 fs-3 px-4 py-2" style="border-radius: 0;">
+                            +
+                        </a>
+                    </div>
+
+                {% else %}
+                    
+                    <a href="{% url 'update_cart_item' pk=product.pk action='add' %}" class="btn btn-success btn-lg px-5 py-3 fs-4 shadow-sm" style="border-radius: 10px;">
+                        Добавить в корзину
+                    </a>
+                {% endif %}
+
+            </div>
+
         </div>
     </div>
 </div>
