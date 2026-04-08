@@ -1,6 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import *
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+from .forms import UserRegisterForm
+from .models import Profile
 
 def cart(request):
     if request.user.is_authenticated:
@@ -100,3 +106,33 @@ def search_results(request):
         products = Product.objects.none()
 
     return render(request, 'search_results.html', {'products': products, 'query': query})
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            # Автоматически создаем профиль под аватарку при регистрации
+            Profile.objects.create(user=user)
+            login(request, user)
+            return redirect('profile')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'users/register.html', {'form': form})
+
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('profile')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'users/login.html', {'form': form})
+
+@login_required # Доступ только для авторизованных
+def profile(request):
+    return render(request, 'users/profile.html')

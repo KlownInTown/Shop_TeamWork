@@ -54,3 +54,12 @@ class OrderItem(models.Model):
         else:
             total = 0
         return total
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Заглушка для фото. Не забудь положить default.jpg в папку media/
+    avatar = models.ImageField(default='default.jpg', upload_to='profile_avatars')
+
+    def __str__(self):
+        return f'Профиль пользователя {self.user.username}'

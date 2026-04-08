@@ -18,7 +18,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from store.views import *
+from django.contrib.auth.views import LogoutView # Добавили импорт для функции выхода
+from store.views import * # Твои функции подтягиваются отсюда
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +29,12 @@ urlpatterns = [
     path('cart/', cart, name='cart'), # страница корзины
     path('update_cart_item/<int:pk>/<str:action>/', update_cart_item, name='update_cart_item'),
     path('search/', search_results, name='search_results'),
+    
+    # === НОВЫЕ МАРШРУТЫ ДЛЯ АВТОРИЗАЦИИ И ПРОФИЛЯ ===
+    path('register/', register, name='register'),
+    path('login/', user_login, name='login'),
+    path('logout/', LogoutView.as_view(next_page='/'), name='logout'), # После выхода кидаем на главную '/'
+    path('profile/', profile, name='profile'),
 ]
 
 if settings.DEBUG:

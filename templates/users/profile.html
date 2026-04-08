@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 40px;">
+        
+        <div style="flex: 1; min-width: 300px;">
+            <h2>Личный кабинет</h2>
+            <div class="user-info" style="margin-top: 30px;">
+                
+                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=random&color=fff&size=150" 
+                     alt="Аватар" 
+                     style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                
+                <h3 style="margin-top: 20px; font-size: 24px; color: #333;">{{ user.username }}</h3>
+                <p style="color: #666; font-size: 16px;">Email: {{ user.email }}</p>
+                
+            </div>
+        </div>
+
+        <div style="flex: 2; min-width: 400px; background-color: #ffffff; border-radius: 20px; padding: 40px; box-shadow: 0 8px 25px rgba(0,0,0,0.05);">
+            
+            <h3 style="margin-top: 0; font-size: 22px; color: #222; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                Избранное
+            </h3>
+            
+            <div style="display: flex; justify-content: center; align-items: center; min-height: 300px; background-color: #fcfcfc; border: 2px dashed #eaeaea; border-radius: 10px; margin-top: 20px;">
+                <p style="color: #aaa; font-size: 16px;">
+                    Здесь скоро появятся ваши любимые товары
+                </p>
+            </div>
+            
+        </div>
+
+    </div>
+</div>
+{% endblock %}
