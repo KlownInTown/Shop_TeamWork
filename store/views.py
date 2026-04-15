@@ -7,6 +7,14 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm
 from .models import Profile
+import stripe
+from django.conf import settings
+from django.urls import reverse
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Order, OrderItem, ShippingAddress
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def cart(request):
     if request.user.is_authenticated:
@@ -136,3 +144,62 @@ def user_login(request):
 @login_required # Доступ только для авторизованных
 def profile(request):
     return render(request, 'users/profile.html')
+
+@login_required
+def checkout(request):
+    order, created = Order.objects.get_or_create(customer=request.user, complete=False)
+    items = order.orderitem_set.all()
+    
+    # Считаем общую сумму (предполагается, что у Product есть поле price)
+    # Если у тебя уже есть метод get_cart_total в модели Order, используй его
+    total = sum([item.product.price * item.quantity for item in items]) 
+
+    if request.method == 'POST':
+        # 1. Сохраняем данные формы в БД
+        ShippingAddress.objects.create(
+            customer=request.user,
+            order=order,
+            address=request.POST.get('address'),
+            city=request.POST.get('city'),
+            zipcode=request.POST.get('zipcode')
+        )
+
+        # 2. Формируем товары для Stripe
+        line_items = []
+        for item in items:
+            line_items.append({
+                'price_data': {
+                    'currency': 'rub', # или 'usd'
+                    'unit_amount': int(item.product.price * 100), # Stripe принимает сумму в копейках/центах
+                    'product_data': {
+                        'name': item.product.title, # Имя товара
+                    },
+                },
+                'quantity': item.quantity,
+            })
+
+        # 3. Создаем сессию оплаты Stripe
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=line_items,
+            mode='payment',
+            success_url=request.build_absolute_uri(reverse('payment_success')),
+            cancel_url=request.build_absolute_uri(reverse('cart')),
+        )
+        
+        # 4. Перенаправляем на страницу оплаты Stripe
+        return redirect(checkout_session.url, code=303)
+
+    context = {'items': items, 'order': order, 'total': total}
+    return render(request, 'checkout.html', context)
+
+@login_required
+def payment_success(request):
+    # Находим текущий активный заказ
+    order = Order.objects.get(customer=request.user, complete=False)
+    
+    # Закрываем корзину (помечаем заказ как завершенный)
+    order.complete = True
+    order.save()
+    
+    return render(request, 'success.html')

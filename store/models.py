@@ -63,3 +63,14 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'Профиль пользователя {self.user.username}'
+    
+class ShippingAddress(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+    address = models.CharField(max_length=200, null=False)
+    city = models.CharField(max_length=200, null=False)
+    zipcode = models.CharField(max_length=200, null=False)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.address

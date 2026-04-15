@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; padding: 100px 20px;">
+    <h2 style="color: #4CAF50;">Оплата прошла успешно! 🎉</h2>
+    <p style="font-size: 18px; margin-top: 20px;">Ваш заказ оформлен и передан в доставку.</p>
+    <a href="{% url 'index' %}" class="btn" style="display: inline-block; margin-top: 30px; padding: 10px 20px; background: #333; color: #fff; text-decoration: none; border-radius: 5px;">
+        Вернуться в магазин
+    </a>
+</div>
+{% endblock %}

@@ -35,6 +35,8 @@ urlpatterns = [
     path('login/', user_login, name='login'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'), # После выхода кидаем на главную '/'
     path('profile/', profile, name='profile'),
+    path('checkout/', checkout, name='checkout'),
+    path('success/', payment_success, name='payment_success'),
 ]
 
 if settings.DEBUG:

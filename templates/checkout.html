@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <h2>Оформление заказа</h2>
+    
+    <div style="display: flex; gap: 40px; margin-top: 20px;">
+        <div style="flex: 1;">
+            <form method="POST" action="{% url 'checkout' %}" style="display: flex; flex-direction: column; gap: 15px;">
+                {% csrf_token %}
+                <input type="text" name="address" placeholder="Адрес (улица, дом)" required style="padding: 10px;">
+                <input type="text" name="city" placeholder="Город" required style="padding: 10px;">
+                <input type="text" name="zipcode" placeholder="Индекс" required style="padding: 10px;">
+                
+                <button type="submit" class="btn btn-primary" style="padding: 12px; background-color: #5469d4; color: white; border: none; cursor: pointer;">
+                    Перейти к оплате
+                </button>
+            </form>
+        </div>
+
+        <div style="flex: 1; background: #f9f9f9; padding: 20px; border-radius: 10px;">
+            <h3>Ваш заказ:</h3>
+            {% for item in items %}
+                <p>{{ item.product.title }} — {{ item.quantity }} шт.</p>
+            {% endfor %}
+            <hr>
+            <h4>Итого: {{ total }} руб.</h4>
+        </div>
+    </div>
+</div>
+{% endblock %}
