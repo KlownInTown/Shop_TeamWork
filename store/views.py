@@ -141,9 +141,19 @@ def user_login(request):
         form = AuthenticationForm()
     return render(request, 'users/login.html', {'form': form})
 
-@login_required # Доступ только для авторизованных
+@login_required
 def profile(request):
-    return render(request, 'users/profile.html')
+    # Получаем историю завершенных заказов (от новых к старым)
+    orders = Order.objects.filter(customer=request.user, complete=True).order_by('-date_ordered')
+    
+    # Обработка загрузки фото (если была отправлена форма)
+    if request.method == 'POST' and request.FILES.get('profile_pic'):
+        profile, created = Profile.objects.get_or_create(user=request.user)
+        profile.image = request.FILES['profile_pic']
+        profile.save()
+        return redirect('profile')
+    context = {'orders': orders}
+    return render(request, 'users/profile.html', context)
 
 @login_required
 def checkout(request):

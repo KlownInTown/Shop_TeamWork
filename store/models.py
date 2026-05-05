@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
@@ -58,11 +60,10 @@ class OrderItem(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # Заглушка для фото. Не забудь положить default.jpg в папку media/
-    avatar = models.ImageField(default='default.jpg', upload_to='profile_avatars')
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
 
     def __str__(self):
-        return f'Профиль пользователя {self.user.username}'
+        return f'{self.user.username} Profile'
     
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

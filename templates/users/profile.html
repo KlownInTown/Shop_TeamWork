@@ -1,38 +1,113 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% load static %}
 
 {% block content %}
-<div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+<style>
+    .profile-container {
+        display: flex;
+        gap: 2rem;
+        padding: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    /* Стили для блока аватара */
+    .avatar-wrapper {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .avatar-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.3s;
+    }
+
+    .avatar-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        color: white;
+        font-size: 2rem;
+    }
+
+    .avatar-wrapper:hover .avatar-overlay {
+        opacity: 1;
+    }
+
+    /* Стили для истории заказов */
+    .orders-history {
+        flex-grow: 1;
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .order-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .status-paid {
+        color: #28a745;
+        font-weight: bold;
+    }
+</style>
+
+<div class="profile-container">
     
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 40px;">
-        
-        <div style="flex: 1; min-width: 300px;">
-            <h2>Личный кабинет</h2>
-            <div class="user-info" style="margin-top: 30px;">
-                
-                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=random&color=fff&size=150" 
-                     alt="Аватар" 
-                     style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                
-                <h3 style="margin-top: 20px; font-size: 24px; color: #333;">{{ user.username }}</h3>
-                <p style="color: #666; font-size: 16px;">Email: {{ user.email }}</p>
-                
-            </div>
-        </div>
+    <div class="profile-sidebar">
+        <h3>Мой профиль</h3>
+        <p>Привет, {{ user.username }}!</p>
 
-        <div style="flex: 2; min-width: 400px; background-color: #ffffff; border-radius: 20px; padding: 40px; box-shadow: 0 8px 25px rgba(0,0,0,0.05);">
-            
-            <h3 style="margin-top: 0; font-size: 22px; color: #222; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
-                Избранное
-            </h3>
-            
-            <div style="display: flex; justify-content: center; align-items: center; min-height: 300px; background-color: #fcfcfc; border: 2px dashed #eaeaea; border-radius: 10px; margin-top: 20px;">
-                <p style="color: #aaa; font-size: 16px;">
-                    Здесь скоро появятся ваши любимые товары
-                </p>
+        <form id="avatarForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="avatar-wrapper" onclick="document.getElementById('fileInput').click()">
+                {% if user.profile.image %}
+                    <img src="{{ user.profile.image.url }}" alt="Avatar">
+                {% else %}
+                    <img src="https://ui-avatars.com/api/?name={{ user.username }}&size=150&background=random" alt="Avatar">
+                {% endif %}
+                
+                <div class="avatar-overlay">
+                    <span>+</span>
+                </div>
             </div>
-            
-        </div>
-
+            <input type="file" id="fileInput" name="profile_pic" style="display:none;" onchange="document.getElementById('avatarForm').submit()">
+        </form>
     </div>
+
+    <div class="orders-history">
+        <h3>История заказов</h3>
+        {% if orders %}
+            {% for order in orders %}
+            <div class="order-card">
+                <div>
+                    <strong>Заказ №{{ order.id }}</strong> <br>
+                    <small style="color: gray;">{{ order.date_ordered|date:"d.m.Y H:i" }}</small>
+                </div>
+                <div class="status-paid">Оплачено</div>
+                <div><strong>{{ order.get_cart_total|floatformat:2 }} руб.</strong></div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>У вас пока нет оформленных заказов.</p>
+        {% endif %}
+    </div>
+
 </div>
-{% endblock %}
+{% endblock content %}
