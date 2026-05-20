@@ -20,6 +20,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth.views import LogoutView # Добавили импорт для функции выхода
 from store.views import * # Твои функции подтягиваются отсюда
+from store import seller_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,6 +38,7 @@ urlpatterns = [
     path('profile/', profile, name='profile'),
     path('checkout/', checkout, name='checkout'),
     path('success/', payment_success, name='payment_success'),
+    path('add-product/', seller_views.add_product, name='add_product'),
 ]
 
 if settings.DEBUG:

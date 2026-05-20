@@ -1,13 +1,71 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="your-auth-form-class">
-    <h2>Регистрация</h2>
+<div style="max-width: 500px; margin: 50px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+    <h2 style="text-align: center; margin-bottom: 25px;">Регистрация</h2>
+    
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }} 
-        <button type="submit" class="your-btn-class">Зарегистрироваться</button>
+        
+        <!-- Вывод ошибок, если они есть -->
+        {% if form.errors %}
+            <div style="color: red; margin-bottom: 15px;">Пожалуйста, исправьте ошибки ниже.</div>
+        {% endif %}
+
+        <!-- Основные поля формы -->
+        {% for field in form %}
+            {% if field.name != 'is_seller' and field.name != 'company_name' %}
+                <!-- Внутри цикла for field in form в register.html -->
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">{{ field.label }}</label>
+                    {{ field }}
+    
+                    <!-- ДОБАВЬ ЭТОТ БЛОК ДЛЯ ОШИБОК К КАЖДОМУ ПОЛЮ -->
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <p style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if field.help_text %}
+                        <small style="display: block; color: gray;">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+        <!-- Блок выбора роли -->
+        <div style="margin-bottom: 15px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                {{ form.is_seller }} <strong>{{ form.is_seller.label }}</strong>
+            </label>
+        </div>
+
+        <!-- Скрытое поле для названия компании -->
+        <div id="company-field-wrapper" style="display: none; margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">{{ form.company_name.label }}</label>
+            {{ form.company_name }}
+        </div>
+
+        <button type="submit" style="width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+            Зарегистрироваться
+        </button>
     </form>
-    <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
 </div>
+
+<script>
+    // Скрипт для динамического показа поля компании
+    const isSellerCheckbox = document.querySelector('input[name="is_seller"]');
+    const companyWrapper = document.getElementById('company-field-wrapper');
+
+    isSellerCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            companyWrapper.style.display = 'block';
+        } else {
+            companyWrapper.style.display = 'none';
+        }
+    });
+</script>
 {% endblock %}

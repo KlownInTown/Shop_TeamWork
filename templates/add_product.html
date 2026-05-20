@@ -1,0 +1,36 @@
+<!-- templates/add_product.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <h2 style="margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
+        Добавление нового товара
+    </h2>
+    
+    <!-- multipart/form-data обязателен для загрузки файлов (фото) -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px;">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    <p style="color: red; font-size: 0.85rem;">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <div style="display: flex; gap: 10px; margin-top: 25px;">
+            <button type="submit" style="flex: 1; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                Выставить на продажу
+            </button>
+            <a href="{% url 'profile' %}" style="padding: 12px 20px; background: #e74c3c; color: white; text-decoration: none; border-radius: 8px; text-align: center;">
+                Отмена
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
