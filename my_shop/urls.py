@@ -39,6 +39,11 @@ urlpatterns = [
     path('checkout/', checkout, name='checkout'),
     path('success/', payment_success, name='payment_success'),
     path('add-product/', seller_views.add_product, name='add_product'),
+    path('add-product/', seller_views.add_product, name='add_product'),
+    
+    # Новые пути:
+    path('edit-product/<int:pk>/', seller_views.edit_product, name='edit_product'),
+    path('delete-product/<int:pk>/', seller_views.delete_product, name='delete_product'),
 ]
 
 if settings.DEBUG:
