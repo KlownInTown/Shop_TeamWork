@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # 1. Контейнер Базы Данных (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: shop_db
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=shop_teamwork_db
+      - POSTGRES_USER=surik_user
+      - POSTGRES_PASSWORD=super_secure_password
+    ports:
+      - "5432:5432"
+
+  # 2. Контейнер Django (Backend)
+  backend:
+    build: .
+    container_name: shop_backend
+    restart: always
+    command: gunicorn my_shop.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    environment:
+      - DB_NAME=shop_teamwork_db
+      - DB_USER=surik_user
+      - DB_PASSWORD=super_secure_password
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
+
+  # 3. Контейнер Nginx (Frontend)
+  frontend:
+    build: ./frontend
+    container_name: shop_frontend
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:  # Этот том гарантирует сохранение данных БД
+  static_volume:
+  media_volume:

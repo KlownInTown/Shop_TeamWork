@@ -29,7 +29,8 @@ STRIPE_SECRET_KEY = 'sk_test_51TML7UCXLAe1fQZrUE3Zy4wHfTNDXuUh9XNurO3IHwg31hDQBS
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Внутри Docker-сети запросы будут идти под разными хостами, поэтому разрешаем все
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -78,10 +79,15 @@ WSGI_APPLICATION = 'my_shop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Вместо файла sqlite используем переменные окружения, которые передаст Docker
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'shop_teamwork_db'),
+        'USER': os.environ.get('DB_USER', 'surik_user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'super_secure_password'),
+        'HOST': os.environ.get('DB_HOST', 'db'),  # 'db' — это имя контейнера из docker-compose
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
